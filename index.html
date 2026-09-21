@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobBoard Pro - Advanced Job Platform</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #475569;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #cbd5e1;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .logo i {
+            font-size: 28px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Main Content */
+        main {
+            padding: 30px 0;
+        }
+        
+        /* Home Page */
+        .hero {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 60px 0;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .search-bar {
+            display: flex;
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-bar button {
+            padding: 15px 30px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .search-bar button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .featured-jobs {
+            margin-top: 40px;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: var(--dark);
+        }
+        
+        .job-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .job-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .job-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .job-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .company {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .company-logo {
+            width: 50px;
+            height: 50px;
+            background-color: #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .company-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .company-info p {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        
+        .job-details {
+            padding: 20px;
+        }
+        
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--secondary);
+        }
+        
+        .job-description {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+        
+        .job-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .salary {
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        /* Job Listings Page */
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            flex: 1;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        /* Job Detail Page */
+        .job-detail {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .job-detail-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .job-detail-title {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .job-detail-company {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .job-detail-logo {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .job-detail-info h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .job-detail-info p {
+            opacity: 0.9;
+        }
+        
+        .job-detail-content {
+            padding: 30px;
+        }
+        
+        .job-detail-section {
+            margin-bottom: 30px;
+        }
+        
+        .job-detail-section h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .job-detail-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .job-detail-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 18px;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .sidebar {
+            flex: 0 0 250px;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+        
+        .sidebar h3 {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 15px;
+        }
+        
+        .sidebar a {
+            text-decoration: none;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #dbeafe;
+            color: var(--primary);
+        }
+        
+        .dashboard-content {
+            flex: 1;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-card h3 {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+        }
+        
+        .applications-list {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .application-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .application-info h4 {
+            margin-bottom: 5px;
+        }
+        
+        .application-info p {
+            color: var(--secondary);
+        }
+        
+        .application-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-approved {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Application Form */
+        .application-form {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+        }
+        
+        .file-upload i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                flex: 0 0 auto;
+            }
+            
+            .job-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Mock data for our job board
+        const mockJobs = [
+            {
+                id: 1,
+                title: "Senior Frontend Developer",
+                company: "Tech Innovations Inc.",
+                location: "San Francisco, CA",
+                type: "Full-time",
+                salary: "$120,000 - $150,000",
+                experience: "5+ years",
+                posted: "2 days ago",
+                description: "We are looking for an experienced Frontend Developer to join our team. You will be responsible for building user interfaces using React and modern web technologies.",
+                requirements: [
+                    "5+ years of experience with React",
+                    "Strong knowledge of JavaScript, HTML, CSS",
+                    "Experience with state management libraries",
+                    "Familiarity with RESTful APIs",
+                    "Good understanding of responsive design"
+                ],
+                responsibilities: [
+                    "Develop new user-facing features",
+                    "Build reusable components and front-end libraries",
+                    "Optimize applications for maximum speed and scalability",
+                    "Collaborate with back-end developers and web designers",
+                    "Implement responsive design on mobile platforms"
+                ]
+            },
+            {
+                id: 2,
+                title: "UX/UI Designer",
+                company: "Creative Solutions",
+                location: "New York, NY",
+                type: "Full-time",
+                salary: "$90,000 - $110,000",
+                experience: "3+ years",
+                posted: "1 week ago",
+                description: "Join our design team to create beautiful and functional user experiences for our web and mobile applications.",
+                requirements: [
+                    "3+ years of UX/UI design experience",
+                    "Proficiency in design tools (Figma, Sketch, Adobe XD)",
+                    "Strong portfolio showcasing design process",
+                    "Understanding of user-centered design principles",
+                    "Experience with prototyping and user testing"
+                ],
+                responsibilities: [
+                    "Create wireframes, prototypes, and high-fidelity designs",
+                    "Conduct user research and usability testing",
+                    "Collaborate with product managers and developers",
+                    "Develop design systems and style guides",
+                    "Present design concepts to stakeholders"
+                ]
+            },
+            {
+                id: 3,
+                title: "Data Scientist",
+                company: "Data Insights Co.",
+                location: "Remote",
+                type: "Full-time",
+                salary: "$130,000 - $160,000",
+                experience: "4+ years",
+                posted: "3 days ago",
+                description: "We're seeking a Data Scientist to analyze complex datasets and build predictive models to drive business decisions.",
+                requirements: [
+                    "4+ years of experience in data science",
+                    "Proficiency in Python, R, or SQL",
+                    "Experience with machine learning frameworks",
+                    "Strong statistical analysis skills",
+                    "Knowledge of data visualization tools"
+                ],
+                responsibilities: [
+                    "Analyze large, complex datasets to find trends",
+                    "Build and implement machine learning models",
+                    "Create data visualizations and reports",
+                    "Collaborate with cross-functional teams",
+                    "Present findings to stakeholders"
+                ]
+            },
+            {
+                id: 4,
+                title: "DevOps Engineer",
+                company: "Cloud Systems Ltd.",
+                location: "Austin, TX",
+                type: "Full-time",
+                salary: "$110,000 - $140,000",
+                experience: "4+ years",
+                posted: "5 days ago",
+                description: "Looking for a DevOps Engineer to manage our cloud infrastructure and CI/CD pipelines.",
+                requirements: [
+                    "4+ years of DevOps experience",
+                    "Experience with AWS, Azure, or GCP",
+                    "Knowledge of Docker and Kubernetes",
+                    "Familiarity with CI/CD tools (Jenkins, GitLab)",
+                    "Scripting skills (Python, Bash)"
+                ],
+                responsibilities: [
+                    "Design and maintain cloud infrastructure",
+                    "Implement and manage CI/CD pipelines",
+                    "Monitor system performance and reliability",
+                    "Automate deployment processes",
+                    "Ensure security and compliance"
+                ]
+            },
+            {
+                id: 5,
+                title: "Product Manager",
+                company: "InnovateX",
+                location: "Seattle, WA",
+                type: "Full-time",
+                salary: "$125,000 - $155,000",
+                experience: "5+ years",
+                posted: "1 week ago",
+                description: "Join our product team to drive the development of innovative software solutions.",
+                requirements: [
+                    "5+ years of product management experience",
+                    "Experience with Agile methodologies",
+                    "Strong analytical and problem-solving skills",
+                    "Excellent communication and leadership abilities",
+                    "Technical background preferred"
+                ],
+                responsibilities: [
+                    "Define product vision and roadmap",
+                    "Gather and prioritize product requirements",
+                    "Work closely with engineering and design teams",
+                    "Analyze market trends and competitor products",
+                    "Track product performance metrics"
+                ]
+            },
+            {
+                id: 6,
+                title: "Marketing Specialist",
+                company: "Growth Partners",
+                location: "Chicago, IL",
+                type: "Full-time",
+                salary: "$70,000 - $85,000",
+                experience: "2+ years",
+                posted: "4 days ago",
+                description: "We're looking for a creative Marketing Specialist to help promote our services and grow our customer base.",
+                requirements: [
+                    "2+ years of marketing experience",
+                    "Experience with digital marketing channels",
+                    "Strong written and verbal communication skills",
+                    "Familiarity with marketing automation tools",
+                    "Knowledge of analytics platforms"
+                ],
+                responsibilities: [
+                    "Develop and execute marketing campaigns",
+                    "Create content for social media and email",
+                    "Analyze campaign performance and metrics",
+                    "Collaborate with sales and design teams",
+                    "Manage marketing budget and resources"
+                ]
+            }
+        ];
+
+        // Mock user data
+        const mockUsers = [
+            {
+                id: 1,
+                name: "John Doe",
+                email: "john@example.com",
+                role: "candidate",
+                profile: {
+                    title: "Senior Frontend Developer",
+                    experience: "5 years",
+                    skills: ["React", "JavaScript", "HTML", "CSS"],
+                    resume: "john_doe_resume.pdf"
+                }
+            },
+            {
+                id: 2,
+                name: "Jane Smith",
+                email: "jane@company.com",
+                role: "employer",
+                company: "Tech Innovations Inc."
+            }
+        ];
+
+        // Mock applications
+        const mockApplications = [
+            {
+                id: 1,
+                jobId: 1,
+                candidateId: 1,
+                status: "pending",
+                appliedDate: "2023-05-15"
+            }
+        ];
+
+        // Main App Component
+        function App() {
+            const [currentPage, setCurrentPage] = React.useState('home');
+            const [user, setUser] = React.useState(null);
+            const [jobs, setJobs] = React.useState(mockJobs);
+            const [selectedJob, setSelectedJob] = React.useState(null);
+            const [searchTerm, setSearchTerm] = React.useState('');
+            const [filters, setFilters] = React.useState({
+                location: '',
+                type: '',
+                experience: ''
+            });
+            const [applications, setApplications] = React.useState(mockApplications);
+
+            // Filter jobs based on search and filters
+            const filteredJobs = jobs.filter(job => {
+                const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                     job.company.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                const matchesLocation = filters.location ? job.location.includes(filters.location) : true;
+                const matchesType = filters.type ? job.type === filters.type : true;
+                const matchesExperience = filters.experience ? job.experience.includes(filters.experience) : true;
+                
+                return matchesSearch && matchesLocation && matchesType && matchesExperience;
+            });
+
+            // Handle login
+            const handleLogin = (email, password) => {
+                const foundUser = mockUsers.find(u => u.email === email);
+                if (foundUser) {
+                    setUser(foundUser);
+                    return true;
+                }
+                return false;
+            };
+
+            // Handle logout
+            const handleLogout = () => {
+                setUser(null);
+                setCurrentPage('home');
+            };
+
+            // Apply for a job
+            const applyForJob = (jobId) => {
+                if (!user) {
+                    alert("Please log in to apply for jobs");
+                    setCurrentPage('login');
+                    return;
+                }
+                
+                const newApplication = {
+                    id: applications.length + 1,
+                    jobId: jobId,
+                    candidateId: user.id,
+                    status: "pending",
+                    appliedDate: new Date().toISOString().split('T')[0]
+                };
+                
+                setApplications([...applications, newApplication]);
+                alert("Application submitted successfully!");
+            };
+
+            // Post a new job
+            const postJob = (jobData) => {
+                const newJob = {
+                    id: jobs.length + 1,
+                    ...jobData,
+                    posted: "Just now"
+                };
+                setJobs([...jobs, newJob]);
+                alert("Job posted successfully!");
+            };
+
+            // Render current page
+            const renderPage = () => {
+                switch (currentPage) {
+                    case 'home':
+                        return <HomePage 
+                            jobs={filteredJobs.slice(0, 3)} 
+                            onSearch={setSearchTerm}
+                            onViewJob={(job) => {
+                                setSelectedJob(job);
+                                setCurrentPage('job-detail');
+                            }}
+                        />;
+                    case 'jobs':
+                        return <JobsPage 
+                            jobs={filteredJobs} 
+                            onViewJob={(job) => {
+                                setSelectedJob(job);
+                                setCurrentPage('job-detail');
+                            }}
+                            filters={filters}
+                            setFilters={setFilters}
+                        />;
+                    case 'job-detail':
+                        return <JobDetailPage 
+                            job={selectedJob} 
+                            onApply={applyForJob}
+                            onBack={() => setCurrentPage('jobs')}
+                        />;
+                    case 'employer-dashboard':
+                        return <EmployerDashboard 
+                            jobs={jobs.filter(j => j.company === "Tech Innovations Inc.")}
+                            onPostJob={postJob}
+                        />;
+                    case 'candidate-dashboard':
+                        return <CandidateDashboard 
+                            applications={applications.filter(a => a.candidateId === 1)}
+                        />;
+                    case 'apply':
+                        return <ApplicationForm 
+                            job={selectedJob}
+                            onSubmit={() => {
+                                applyForJob(selectedJob.id);
+                                setCurrentPage('jobs');
+                            }}
+                        />;
+                    case 'login':
+                        return <LoginForm onLogin={handleLogin} />;
+                    case 'register':
+                        return <RegisterForm />;
+                    default:
+                        return <HomePage 
+                            jobs={filteredJobs.slice(0, 3)} 
+                            onSearch={setSearchTerm}
+                            onViewJob={(job) => {
+                                setSelectedJob(job);
+                                setCurrentPage('job-detail');
+                            }}
+                        />;
+                }
+            };
+
+            return (
+                <div>
+                    <Header 
+                        user={user} 
+                        onLogin={() => setCurrentPage('login')}
+                        onRegister={() => setCurrentPage('register')}
+                        onLogout={handleLogout}
+                        onPageChange={setCurrentPage}
+                    />
+                    <main className="container">
+                        {renderPage()}
+                    </main>
+                    <Footer />
+                </div>
+            );
+        }
+
+        // Header Component
+        function Header({ user, onLogin, onRegister, onLogout, onPageChange }) {
+            return (
+                <header>
+                    <div className="container">
+                        <div className="header-content">
+                            <div className="logo" onClick={() => onPageChange('home')}>
+                                <i className="fas fa-briefcase"></i>
+                                <span>JobBoard Pro</span>
+                            </div>
+                            <nav>
+                                <ul>
+                                    <li><a onClick={() => onPageChange('home')}>Home</a></li>
+                                    <li><a onClick={() => onPageChange('jobs')}>Jobs</a></li>
+                                    <li><a onClick={() => onPageChange('about')}>About</a></li>
+                                    <li><a onClick={() => onPageChange('contact')}>Contact</a></li>
+                                </ul>
+                            </nav>
+                            <div className="auth-buttons">
+                                {user ? (
+                                    <>
+                                        <button className="btn btn-outline" onClick={onLogout}>Logout</button>
+                                        {user.role === 'employer' ? (
+                                            <button className="btn btn-primary" onClick={() => onPageChange('employer-dashboard')}>
+                                                Dashboard
+                                            </button>
+                                        ) : (
+                                            <button className="btn btn-primary" onClick={() => onPageChange('candidate-dashboard')}>
+                                                Dashboard
+                                            </button>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <button className="btn btn-outline" onClick={onLogin}>Login</button>
+                                        <button className="btn btn-primary" onClick={onRegister}>Register</button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            );
+        }
+
+        // Home Page Component
+        function HomePage({ jobs, onSearch, onViewJob }) {
+            const [searchValue, setSearchValue] = React.useState('');
+
+            const handleSearch = (e) => {
+                e.preventDefault();
+                onSearch(searchValue);
+            };
+
+            return (
+                <>
+                    <section className="hero">
+                        <div className="container">
+                            <h1>Find Your Dream Job Today</h1>
+                            <p>Connect with top employers and discover opportunities that match your skills and aspirations</p>
+                            <form className="search-bar" onSubmit={handleSearch}>
+                                <input 
+                                    type="text" 
+                                    placeholder="Job title, keywords, or company" 
+                                    value={searchValue}
+                                    onChange={(e) => setSearchValue(e.target.value)}
+                                />
+                                <button type="submit">Search Jobs</button>
+                            </form>
+                        </div>
+                    </section>
+
+                    <section className="featured-jobs">
+                        <h2 className="section-title">Featured Jobs</h2>
+                        <div className="job-grid">
+                            {jobs.map(job => (
+                                <JobCard key={job.id} job={job} onViewJob={() => onViewJob(job)} />
+                            ))}
+                        </div>
+                        <div style={{textAlign: 'center', marginTop: '30px'}}>
+                            <button className="btn btn-outline" onClick={() => window.location.hash = '#jobs'}>
+                                View All Jobs
+                            </button>
+                        </div>
+                    </section>
+                </>
+            );
+        }
+
+        // Job Card Component
+        function JobCard({ job, onViewJob }) {
+            return (
+                <div className="job-card">
+                    <div className="job-header">
+                        <h3 className="job-title">{job.title}</h3>
+                        <div className="company">
+                            <div className="company-logo">{job.company.charAt(0)}</div>
+                            <div className="company-info">
+                                <h3>{job.company}</h3>
+                                <p>{job.location}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="job-details">
+                        <div className="job-meta">
+                            <div className="meta-item">
+                                <i className="fas fa-briefcase"></i>
+                                <span>{job.type}</span>
+                            </div>
+                            <div className="meta-item">
+                                <i className="fas fa-dollar-sign"></i>
+                                <span>{job.salary}</span>
+                            </div>
+                            <div className="meta-item">
+                                <i className="fas fa-clock"></i>
+                                <span>{job.posted}</span>
+                            </div>
+                        </div>
+                        <p className="job-description">
+                            {job.description.substring(0, 100)}...
+                        </p>
+                        <div className="job-actions">
+                            <button className="btn btn-outline" onClick={onViewJob}>View Details</button>
+                            <span className="salary">{job.salary}</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Jobs Page Component
+        function JobsPage({ jobs, onViewJob, filters, setFilters }) {
+            return (
+                <>
+                    <div className="filters">
+                        <h2>Filter Jobs</h2>
+                        <div className="filter-row">
+                            <div className="filter-group">
+                                <label>Location</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="City or remote" 
+                                    value={filters.location}
+                                    onChange={(e) => setFilters({...filters, location: e.target.value})}
+                                />
+                            </div>
+                            <div className="filter-group">
+                                <label>Job Type</label>
+                                <select 
+                                    value={filters.type}
+                                    onChange={(e) => setFilters({...filters, type: e.target.value})}
+                                >
+                                    <option value="">All Types</option>
+                                    <option value="Full-time">Full-time</option>
+                                    <option value="Part-time">Part-time</option>
+                                    <option value="Contract">Contract</option>
+                                    <option value="Remote">Remote</option>
+                                </select>
+                            </div>
+                            <div className="filter-group">
+                                <label>Experience</label>
+                                <select 
+                                    value={filters.experience}
+                                    onChange={(e) => setFilters({...filters, experience: e.target.value})}
+                                >
+                                    <option value="">Any Experience</option>
+                                    <option value="1+ years">1+ years</option>
+                                    <option value="2+ years">2+ years</option>
+                                    <option value="3+ years">3+ years</option>
+                                    <option value="5+ years">5+ years</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="filter-buttons">
+                            <button className="btn btn-outline" onClick={() => setFilters({location: '', type: '', experience: ''})}>
+                                Clear Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <h2 className="section-title">Job Listings ({jobs.length} jobs)</h2>
+                    <div className="job-grid">
+                        {jobs.map(job => (
+                            <JobCard key={job.id} job={job} onViewJob={() => onViewJob(job)} />
+                        ))}
+                    </div>
+                </>
+            );
+        }
+
+        // Job Detail Page Component
+        function JobDetailPage({ job, onApply, onBack }) {
+            if (!job) return <div>Job not found</div>;
+
+            return (
+                <div className="job-detail">
+                    <div className="job-detail-header">
+                        <h1 className="job-detail-title">{job.title}</h1>
+                        <div className="job-detail-company">
+                            <div className="job-detail-logo">{job.company.charAt(0)}</div>
+                            <div className="job-detail-info">
+                                <h2>{job.company}</h2>
+                                <p><i className="fas fa-map-marker-alt"></i> {job.location}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="job-detail-content">
+                        <div className="job-detail-section">
+                            <h3>Job Overview</h3>
+                            <p>{job.description}</p>
+                        </div>
+                        
+                        <div className="job-detail-section">
+                            <h3>Requirements</h3>
+                            <ul>
+                                {job.requirements.map((req, index) => (
+                                    <li key={index}>{req}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        
+                        <div className="job-detail-section">
+                            <h3>Responsibilities</h3>
+                            <ul>
+                                {job.responsibilities.map((resp, index) => (
+                                    <li key={index}>{resp}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        
+                        <div className="job-detail-section">
+                            <h3>Job Details</h3>
+                            <div className="job-meta">
+                                <div className="meta-item">
+                                    <i className="fas fa-briefcase"></i>
+                                    <span><strong>Type:</strong> {job.type}</span>
+                                </div>
+                                <div className="meta-item">
+                                    <i className="fas fa-dollar-sign"></i>
+                                    <span><strong>Salary:</strong> {job.salary}</span>
+                                </div>
+                                <div className="meta-item">
+                                    <i className="fas fa-chart-line"></i>
+                                    <span><strong>Experience:</strong> {job.experience}</span>
+                                </div>
+                                <div className="meta-item">
+                                    <i className="fas fa-clock"></i>
+                                    <span><strong>Posted:</strong> {job.posted}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="job-detail-actions">
+                            <button className="btn btn-outline" onClick={onBack}>
+                                <i className="fas fa-arrow-left"></i> Back to Jobs
+                            </button>
+                            <button className="btn btn-primary btn-large" onClick={() => onApply(job.id)}>
+                                <i className="fas fa-paper-plane"></i> Apply Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Employer Dashboard Component
+        function EmployerDashboard({ jobs, onPostJob }) {
+            const [activeTab, setActiveTab] = React.useState('jobs');
+            const [newJob, setNewJob] = React.useState({
+                title: '',
+                company: 'Tech Innovations Inc.',
+                location: '',
+                type: 'Full-time',
+                salary: '',
+                experience: '',
+                description: '',
+                requirements: '',
+                responsibilities: ''
+            });
+
+            const handlePostJob = (e) => {
+                e.preventDefault();
+                onPostJob({
+                    ...newJob,
+                    requirements: newJob.requirements.split('\n').filter(r => r.trim() !== ''),
+                    responsibilities: newJob.responsibilities.split('\n').filter(r => r.trim() !== '')
+                });
+                setNewJob({
+                    title: '',
+                    company: 'Tech Innovations Inc.',
+                    location: '',
+                    type: 'Full-time',
+                    salary: '',
+                    experience: '',
+                    description: '',
+                    requirements: '',
+                    responsibilities: ''
+                });
+            };
+
+            return (
+                <div className="dashboard">
+                    <div className="sidebar">
+                        <h3>Employer Dashboard</h3>
+                        <ul>
+                            <li>
+                                <a 
+                                    className={activeTab === 'jobs' ? 'active' : ''} 
+                                    onClick={() => setActiveTab('jobs')}
+                                >
+                                    <i className="fas fa-briefcase"></i> My Jobs
+                                </a>
+                            </li>
+                            <li>
+                                <a 
+                                    className={activeTab === 'post' ? 'active' : ''} 
+                                    onClick={() => setActiveTab('post')}
+                                >
+                                    <i className="fas fa-plus-circle"></i> Post New Job
+                                </a>
+                            </li>
+                            <li>
+                                <a 
+                                    className={activeTab === 'applications' ? 'active' : ''} 
+                                    onClick={() => setActiveTab('applications')}
+                                >
+                                    <i className="fas fa-file-alt"></i> Applications
+                                </a>
+                            </li>
+                            <li>
+                                <a 
+                                    className={activeTab === 'profile' ? 'active' : ''} 
+                                    onClick={() => setActiveTab('profile')}
+                                >
+                                    <i className="fas fa-user"></i> Company Profile
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div className="dashboard-content">
+                        {activeTab === 'jobs' && (
+                            <div className="dashboard-card">
+                                <h3>My Job Postings</h3>
+                                <div className="job-grid">
+                                    {jobs.map(job => (
+                                        <JobCard key={job.id} job={job} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {activeTab === 'post' && (
+                            <div className="dashboard-card">
+                                <h3>Post a New Job</h3>
+                                <form onSubmit={handlePostJob}>
+                                    <div className="form-group">
+                                        <label>Job Title</label>
+                                        <input 
+                                            type="text" 
+                                            value={newJob.title}
+                                            onChange={(e) => setNewJob({...newJob, title: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label>Location</label>
+                                        <input 
+                                            type="text" 
+                                            value={newJob.location}
+                                            onChange={(e) => setNewJob({...newJob, location: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    
+                                    <div className="form-row" style={{display: 'flex', gap: '20px'}}>
+                                        <div className="form-group" style={{flex: 1}}>
+                                            <label>Job Type</label>
+                                            <select 
+                                                value={newJob.type}
+                                                onChange={(e) => setNewJob({...newJob, type: e.target.value})}
+                                            >
+                                                <option value="Full-time">Full-time</option>
+                                                <option value="Part-time">Part-time</option>
+                                                <option value="Contract">Contract</option>
+                                                <option value="Remote">Remote</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div className="form-group" style={{flex: 1}}>
+                                            <label>Experience Required</label>
+                                            <select 
+                                                value={newJob.experience}
+                                                onChange={(e) => setNewJob({...newJob, experience: e.target.value})}
+                                            >
+                                                <option value="Entry Level">Entry Level</option>
+                                                <option value="1+ years">1+ years</option>
+                                                <option value="2+ years">2+ years</option>
+                                                <option value="3+ years">3+ years</option>
+                                                <option value="5+ years">5+ years</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label>Salary Range</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="$80,000 - $100,000"
+                                            value={newJob.salary}
+                                            onChange={(e) => setNewJob({...newJob, salary: e.target.value})}
+                                        />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label>Job Description</label>
+                                        <textarea 
+                                            value={newJob.description}
+                                            onChange={(e) => setNewJob({...newJob, description: e.target.value})}
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label>Requirements (one per line)</label>
+                                        <textarea 
+                                            placeholder="React experience
+5+ years JavaScript
+..."
+                                            value={newJob.requirements}
+                                            onChange={(e) => setNewJob({...newJob, requirements: e.target.value})}
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label>Responsibilities (one per line)</label>
+                                        <textarea 
+                                            placeholder="Develop new features
+Collaborate with team
+..."
+                                            value={newJob.responsibilities}
+                                            onChange={(e) => setNewJob({...newJob, responsibilities: e.target.value})}
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" className="btn btn-primary">Post Job</button>
+                                </form>
+                            </div>
+                        )}
+                        
+                        {activeTab === 'applications' && (
+                            <div className="dashboard-card">
+                                <h3>Job Applications</h3>
+                                <div className="applications-list">
+                                    <div className="application-card">
+                                        <div className="application-info">
+                                            <h4>John Doe</h4>
+                                            <p>Applied for: Senior Frontend Developer</p>
+                                            <p>Applied on: May 15, 2023</p>
+                                        </div>
+                                        <div className="application-status status-pending">Pending</div>
+                                    </div>
+                                    <div className="application-card">
+                                        <div className="application-info">
+                                            <h4>Sarah Johnson</h4>
+                                            <p>Applied for: Senior Frontend Developer</p>
+                                            <p>Applied on: May 18, 2023</p>
+                                        </div>
+                                        <div className="application-status status-approved">Approved</div>
+                                    </div>
+                                    <div className="application-card">
+                                        <div className="application-info">
+                                            <h4>Michael Brown</h4>
+                                            <p>Applied for: UX/UI Designer</p>
+                                            <p>Applied on: May 20, 2023</p>
+                                        </div>
+                                        <div className="application-status status-rejected">Rejected</div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {activeTab === 'profile' && (
+                            <div className="dashboard-card">
+                                <h3>Company Profile</h3>
+                                <div className="form-group">
+                                    <label>Company Name</label>
+                                    <input type="text" defaultValue="Tech Innovations Inc." />
+                                </div>
+                                <div className="form-group">
+                                    <label>Industry</label>
+                                    <input type="text" defaultValue="Technology" />
+                                </div>
+                                <div className="form-group">
+                                    <label>Company Size</label>
+                                    <select>
+                                        <option>1-10 employees</option>
+                                        <option>11-50 employees</option>
+                                        <option>51-200 employees</option>
+                                        <option>201-500 employees</option>
+                                        <option>500+ employees</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Company Description</label>
+                                    <textarea defaultValue="We are a leading technology company focused on creating innovative solutions for businesses worldwide. Our team is passionate about building products that make a difference."></textarea>
+                                </div>
+                                <button className="btn btn-primary">Save Changes</button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // Candidate Dashboard Component
+        function CandidateDashboard({ applications }) {
+            const [activeTab, setActiveTab] = React.useState('applications');
+            const [profile, setProfile] = React.useState({
+                name: "John Doe",
+                title: "Senior Frontend Developer",
+                experience: "5 years",
+                skills: ["React", "JavaScript", "HTML", "CSS"],
+                resume: "john_doe_resume.pdf"
+            });
+
+            return (
+                <div className="dashboard">
+                    <div className="sidebar">
+                        <h3>Candidate Dashboard</h3>
+                        <ul>
+                            <li>
+                                <a 
+                                    className={activeTab === 'applications' ? 'active' : ''} 
+                                    onClick={() => setActiveTab('applications')}
+                                >
+                                    <i className="fas fa-file-alt"></i> My Applications
+                                </a>
+                            </li>
+                            <li>
+                                <a 
+                                    className={activeTab === 'profile' ? 'active' : ''} 
+                                    onClick={() => setActiveTab('profile')}
+                                >
+                                    <i className="fas fa-user"></i> My Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a 
+                                    className={activeTab === 'saved' ? 'active' : ''} 
+                                    onClick={() => setActiveTab('saved')}
+                                >
+                                    <i className="fas fa-bookmark"></i> Saved Jobs
+                                </a>
+                            </li>
+                            <li>
+                                <a 
+                                    className={activeTab === 'settings' ? 'active' : ''} 
+                                    onClick={() => setActiveTab('settings')}
+                                >
+                                    <i className="fas fa-cog"></i> Settings
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div className="dashboard-content">
+                        {activeTab === 'applications' && (
+                            <div className="dashboard-card">
+                                <h3>My Job Applications</h3>
+                                <div className="applications-list">
+                                    {applications.map(app => {
+                                        const job = mockJobs.find(j => j.id === app.jobId);
+                                        return (
+                                            <div className="application-card" key={app.id}>
+                                                <div className="application-info">
+                                                    <h4>{job.title}</h4>
+                                                    <p>Company: {job.company}</p>
+                                                    <p>Applied on: {app.appliedDate}</p>
+                                                </div>
+                                                <div className={`application-status status-${app.status}`}>
+                                                    {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {activeTab === 'profile' && (
+                            <div className="dashboard-card">
+                                <h3>My Profile</h3>
+                                <div className="form-group">
+                                    <label>Full Name</label>
+                                    <input 
+                                        type="text" 
+                                        value={profile.name}
+                                        onChange={(e) => setProfile({...profile, name: e.target.value})}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Professional Title</label>
+                                    <input 
+                                        type="text" 
+                                        value={profile.title}
+                                        onChange={(e) => setProfile({...profile, title: e.target.value})}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Years of Experience</label>
+                                    <input 
+                                        type="text" 
+                                        value={profile.experience}
+                                        onChange={(e) => setProfile({...profile, experience: e.target.value})}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Skills (comma separated)</label>
+                                    <input 
+                                        type="text" 
+                                        value={profile.skills.join(', ')}
+                                        onChange={(e) => setProfile({...profile, skills: e.target.value.split(',').map(s => s.trim())})}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Resume</label>
+                                    <div className="file-upload">
+                                        <i className="fas fa-cloud-upload-alt"></i>
+                                        <p>Drag & drop your resume here or click to browse</p>
+                                        <p><small>PDF, DOC, DOCX files only (max 5MB)</small></p>
+                                        <button className="btn btn-outline" style={{marginTop: '15px'}}>Upload Resume</button>
+                                    </div>
+                                </div>
+                                <button className="btn btn-primary">Save Changes</button>
+                            </div>
+                        )}
+                        
+                        {activeTab === 'saved' && (
+                            <div className="dashboard-card">
+                                <h3>Saved Jobs</h3>
+                                <p>You haven't saved any jobs yet.</p>
+                                <button className="btn btn-outline" onClick={() => window.location.hash = '#jobs'}>
+                                    Browse Jobs
+                                </button>
+                            </div>
+                        )}
+                        
+                        {activeTab === 'settings' && (
+                            <div className="dashboard-card">
+                                <h3>Account Settings</h3>
+                                <div className="form-group">
